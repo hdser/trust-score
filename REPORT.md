@@ -297,7 +297,7 @@ The error can be decomposed as:
 Since $|\lambda_i| \leq 1-\alpha$ for $i > 1$:
 
 ```math
-\left|\mathbf{t}^{(k)} - \mathbf{t}^*\right|_1 \leq \sum_{i=2}^n |c_i| (1-\alpha)^k \|\mathbf{v}_i\|_1 \leq 2(1-\alpha)^k
+\|\mathbf{t}^{(k)} - \mathbf{t}^*\|_1 \leq \sum_{i=2}^n |c_i| (1-\alpha)^k \|\mathbf{v}_i\|_1 \leq 2(1-\alpha)^k
 ```
 
 **Practical Implications:**
