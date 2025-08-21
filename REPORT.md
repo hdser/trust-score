@@ -67,12 +67,14 @@ where:
 
 $$
 \mathbf{D}_{\text{out}} =
-\begin{bmatrix}
+\left[
+\begin{array}{cccc}
 \sum_{j} W_{1j} & 0 & \cdots & 0 \\
 0 & \sum_{j} W_{2j} & \cdots & 0 \\
 \vdots & \vdots & \ddots & \vdots \\
 0 & 0 & \cdots & \sum_{j} W_{nj}
-\end{bmatrix}
+\end{array}
+\right]
 $$
 
 **Definition 1.5 (Column-Stochastic Matrix):**
