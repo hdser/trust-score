@@ -64,6 +64,7 @@ A matrix $\mathbf{P}$ is row-stochastic if each row sums to 1:
 $$\mathbf{P} = \mathbf{D}_{\text{out}}^{-1} \mathbf{W}$$
 
 where:
+
 $$\mathbf{D}_{\text{out}} = \begin{bmatrix}
 \sum_{j} W_{1j} & 0 & \cdots & 0 \\
 0 & \sum_{j} W_{2j} & \cdots & 0 \\
