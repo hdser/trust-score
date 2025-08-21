@@ -1,0 +1,12 @@
+label,is_converter,token_symbol,metadata
+Alice,false,T_A,"{""created"": ""2024-01-01"", ""type"": ""regular""}"
+Bob,false,T_B,"{""created"": ""2024-01-02"", ""type"": ""regular""}"
+Charlie,false,T_C,"{""created"": ""2024-01-03"", ""type"": ""regular""}"
+David,false,T_D,"{""created"": ""2024-01-04"", ""type"": ""regular""}"
+Eve,false,T_E,"{""created"": ""2024-01-05"", ""type"": ""regular""}"
+Frank,false,T_F,"{""created"": ""2024-01-06"", ""type"": ""regular""}"
+Grace,false,T_G,"{""created"": ""2024-01-07"", ""type"": ""regular""}"
+Henry,false,T_H,"{""created"": ""2024-01-08"", ""type"": ""regular""}"
+ConvX,true,,"{""location"": ""US"", ""established"": ""2023-01-01""}"
+ConvY,true,,"{""location"": ""EU"", ""established"": ""2023-02-01""}"
+ConvZ,true,,"{""location"": ""ASIA"", ""established"": ""2023-03-01""}"

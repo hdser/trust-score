@@ -1,0 +1,10 @@
+converter,token,rate
+ConvX,T_A,1.00
+ConvX,T_B,0.90
+ConvX,T_C,0.85
+ConvY,T_C,0.85
+ConvY,T_D,0.80
+ConvY,T_E,0.75
+ConvZ,T_E,0.75
+ConvZ,T_F,0.70
+ConvZ,T_G,0.65

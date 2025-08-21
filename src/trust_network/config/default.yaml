@@ -1,0 +1,46 @@
+trust_network:
+  algorithms:
+    social: "eigentrust"  # eigentrust, appleseed, pagerank
+    liquidity: "hybrid"   # conductance, pagerank, hybrid
+  
+  weights:
+    alpha: 0.6  # Social component weight
+    beta: 0.4   # Liquidity component weight
+  
+  parameters:
+    tau: 0.5           # Acceptance threshold
+    max_hops: 6        # Maximum path length
+    
+    appleseed:
+      energy: 0.85
+      iterations: 70
+    
+    eigentrust:
+      alpha: 0.15
+      iterations: 100
+    
+    pagerank:
+      damping: 0.85
+      iterations: 100
+  
+  performance:
+    enable_caching: true
+    cache_size: 10000
+    enable_parallel: true
+    num_workers: 4
+  
+  convergence:
+    tolerance: 1e-9
+  
+  security:
+    sybil_resistance: true
+    pre_trust_converters: true
+
+data:
+  input_format: "csv"  # csv, json
+  data_directory: "data/sample"
+  
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null  # Set to filename to log to file
