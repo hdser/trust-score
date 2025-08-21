@@ -65,13 +65,15 @@ $$\mathbf{P} = \mathbf{D}_{\text{out}}^{-1} \mathbf{W}$$
 
 where:
 
-$$\mathbf{D}_{\text{out}} = 
+$$
+\mathbf{D}_{\text{out}} =
 \begin{bmatrix}
 \sum_{j} W_{1j} & 0 & \cdots & 0 \\
 0 & \sum_{j} W_{2j} & \cdots & 0 \\
 \vdots & \vdots & \ddots & \vdots \\
 0 & 0 & \cdots & \sum_{j} W_{nj}
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 **Definition 1.5 (Column-Stochastic Matrix):**
 A matrix $\mathbf{C}$ is column-stochastic if each column sums to 1:
