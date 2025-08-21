@@ -1040,31 +1040,220 @@ flowchart LR
 
 ### 8.1 Theoretical Foundation
 
-Combines multiple metrics for comprehensive liquidity assessment.
+The hybrid approach addresses the fundamental limitation that **no single liquidity metric captures all aspects** of payment capacity in token networks.
 
-#### 8.1.1 Mathematical Formulation
+#### 8.1.1 Multi-Dimensional Liquidity Theory
+
+**Core Insight:** Liquidity emerges from the interaction of:
+- **Structural properties** (network topology)
+- **Economic properties** (token distribution)
+- **Flow properties** (dynamic routing)
+- **Conversion properties** (fiat accessibility)
 
 **Definition 8.1 (Hybrid Liquidity Score):**
-$$L(v) = \sum_{i=1}^4 w_i \cdot \hat{f}_i(v)$$
+```math
+L(v) = \sum_{i=1}^4 w_i \cdot \hat{f}_i(v)
+```
 
-Components:
-1. **Structural Cohesion:** $\hat{f}_1(v) = 1 - \phi_B(N_k(v))$
-2. **Balance-Weighted Flow:** $\hat{f}_2(v) = FC_B(v)$
-3. **Effective Conversion Rate:** $\hat{f}_3(v) = \hat{R}(v)$
-4. **Token Supply:** $\hat{f}_4(v) = S(v)$
+Where $\sum_{i=1}^4 w_i = 1$ and each $\hat{f}_i(v) \in [0,1]$ is normalized.
 
-### 8.2 Effective Rate Calculation
+#### 8.1.2 Component Analysis
+
+**Component 1: Structural Cohesion**
+```math
+\hat{f}_1(v) = 1 - \phi_B(N_k(v))
+```
+
+Where $\phi_B(N_k(v))$ is the balance-weighted conductance of node $v$'s $k$-hop neighborhood.
+
+**Balance-Weighted Conductance:**
+```math
+\phi_B(S) = \frac{\text{cut}_B(S, \bar{S})}{\min(\text{vol}_B(S), \text{vol}_B(\bar{S}))}
+```
+
+**Cut and Volume Definitions:**
+```math
+\text{cut}_B(S, \bar{S}) = \sum_{u \in S, v \in \bar{S}} W[u,v] \cdot f(B[u,v])
+```
+
+```math
+\text{vol}_B(S) = \sum_{u \in S} \sum_v W[u,v] \cdot f(B[u,v])
+```
+
+**Balance Weighting Function:**
+```math
+f(b) = 1 + \log(1 + b)
+```
+
+This gives higher weight to edges where the source node holds more tokens of the target.
+
+**Component 2: Balance-Weighted Flow Centrality**
+```math
+\hat{f}_2(v) = FC_B(v)
+```
+
+**Random Walk with Balance Bias:**
+Transition probabilities incorporate balance information:
+```math
+P_B(i \to j) = \frac{W[j,i] \cdot g(B[i,j])}{\sum_k W[k,i] \cdot g(B[i,k])}
+```
+
+**Balance Boost Function:**
+```math
+g(b) = 1 + \beta \sqrt{\frac{b}{\bar{b}}}
+```
+
+Where $\beta$ is the balance boost factor and $\bar{b}$ is average balance.
+
+**Flow Centrality Computation:**
+```math
+FC_B(v) = \lim_{T \to \infty} \frac{1}{T} \sum_{t=1}^T \mathbb{1}[X_t = v]
+```
+
+Where $X_t$ is the balance-weighted random walk.
+
+**Component 3: Effective Conversion Rate**
+```math
+\hat{f}_3(v) = \hat{R}(v)
+```
 
 **Definition 8.2 (Effective Conversion Rate with Funded Paths):**
 ```math
-\hat{R}(v) = \max_{c \in K} \left\{ R(c, T(v)) \cdot \mathbb{1}[\text{funded path } c \to v] \right\}
+\hat{R}(v) = \max_{c \in K} \left\{ R(c, T(v)) \cdot \mathbb{1}[\text{funded path } T(v) \to c] \right\}
 ```
 
-A funded path requires:
-1. Trust path exists
-2. Each node holds sufficient balance of $T(v)$
+**Funded Path Conditions:**
+A path $p = (v_1, v_2, \ldots, v_\ell)$ is **funded** for token $T(v)$ if:
 
-### 8.3 Algorithm Flow
+1. **Trust Path Exists:** $W[v_{i+1}, v_i] \geq \tau$ for all $i$
+2. **Token Acceptance:** $W[v_{i+1}, T(v)] \geq \tau$ for all $i$
+3. **Sufficient Balances:** $B[v_i, T(v)] \geq \epsilon$ for all $i < \ell$
+4. **Path Length Constraint:** $\ell \leq L_{\max}$
+
+
+**Component 4: Token Supply**
+```math
+\hat{f}_4(v) = S(v) = \sum_{i=1}^n B[i,v]
+```
+
+Total supply of token $T(v)$ across all holders.
+
+### 8.2 Weight Optimization Theory
+
+#### 8.2.1 Multi-Objective Optimization Formulation
+
+**Objective Function:**
+Minimize prediction error for payment capacity:
+```math
+\min_{\mathbf{w}} \sum_{i,j,k} \left( L_{\mathbf{w}}(i) - \text{PaymentCapacity}(i \to j, T(k)) \right)^2
+```
+
+Subject to:
+- $\sum_{i=1}^4 w_i = 1$
+- $w_i \geq 0$ for all $i$
+
+#### 8.2.2 Component Correlation Analysis
+
+**Correlation Matrix:**
+```math
+\mathbf{C}_{ij} = \text{corr}(\hat{f}_i, \hat{f}_j)
+```
+
+**Optimal Weight Selection:**
+When components are uncorrelated, equal weights maximize information:
+```math
+w_i = \frac{1}{4}
+```
+
+When components are correlated, weight inversely to correlation:
+
+```math
+w_i \propto \frac{1}{\sum_j |\mathbf{C}_{ij}|}
+```
+
+#### 8.2.3 Adaptive Weight Learning
+
+**Dynamic Weight Adjustment:**
+```math
+w_i^{(t+1)} = w_i^{(t)} + \alpha \nabla_{w_i} \mathcal{L}^{(t)}
+```
+
+Where $\mathcal{L}^{(t)}$ is the prediction loss at time $t$.
+
+**Gradient Computation:**
+```math
+\nabla_{w_i} \mathcal{L} = \sum_{v} \left( L(v) - \text{TrueCapacity}(v) \right) \hat{f}_i(v)
+```
+
+### 8.3 Theoretical Properties
+
+#### 8.3.1 Convexity and Convergence
+
+**Theorem 8.1 (Convex Combination):**
+Since each $\hat{f}_i(v) \in [0,1]$ and $\sum w_i = 1$, we have $L(v) \in [0,1]$.
+
+**Theorem 8.2 (Lipschitz Continuity):**
+If each component is Lipschitz with constant $L_i$, then:
+```math
+|L(v) - L(u)| \leq \sum_{i=1}^4 w_i L_i \|v - u\|
+```
+
+This ensures small changes in network structure cause small changes in liquidity scores.
+
+#### 8.3.2 Component Sensitivity Analysis
+
+**Definition 8.3 (Component Sensitivity):**
+```math
+\sigma_i(v) = \frac{\partial L(v)}{\partial \hat{f}_i(v)} = w_i
+```
+
+**Interpretation:** Component $i$ has influence proportional to its weight.
+
+**Total Sensitivity:**
+```math
+\Sigma(v) = \sum_{i=1}^4 \sigma_i(v) \cdot \text{Var}(\hat{f}_i(v)) = \sum_{i=1}^4 w_i \cdot \text{Var}(\hat{f}_i(v))
+```
+
+### 8.4 Enhanced Balance Integration
+
+#### 8.4.1 Cross-Component Balance Effects
+
+**Balance-Structure Interaction:**
+Balance distribution affects structural properties through weighted conductance:
+```math
+\phi_B(S) \neq \phi(S) \text{ when balance distribution is non-uniform}
+```
+
+**Balance-Flow Interaction:**
+Random walk transition probabilities depend on balance holdings:
+```math
+P_B(i \to j) = P(i \to j) \cdot \text{BalanceBoost}(B[i,j])
+```
+
+**Balance-Conversion Interaction:**
+Effective rates require funded paths, creating dependency:
+```math
+\hat{R}(v) = R(v) \cdot \mathbb{1}[\text{SufficientBalances}(\text{PathToConverter}(v))]
+```
+
+#### 8.4.2 Theoretical Balance Weighting
+
+**Optimal Balance Weighting Theorem:**
+
+**Theorem 8.3:** The balance weighting function $f(b) = 1 + \log(1 + b)$ satisfies:
+1. **Monotonicity:** $f'(b) > 0$ (more balance → higher weight)
+2. **Diminishing Returns:** $f''(b) < 0$ (sublinear growth)
+3. **Bounded Growth:** $f(b) = O(\log b)$ (prevents extreme concentration)
+
+**Proof of Optimality:**
+The logarithmic form balances three objectives:
+- **Responsiveness:** Sufficient sensitivity to balance differences
+- **Stability:** Not dominated by largest balance holders
+- **Computational Efficiency:** Smooth and differentiable
+
+
+
+### 8.5 Algorithm Flow
 
 ```mermaid
 flowchart TD
@@ -1128,7 +1317,7 @@ flowchart TD
     M1 --> M2 --> M3 --> N1
 ```
 
-### 8.4 Complete Example
+### 8.6 Complete Example
 
 Given:
 - Trust network (6 nodes)
