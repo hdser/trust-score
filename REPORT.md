@@ -337,14 +337,17 @@ Where $\mathcal{S}$ is the set of Sybil nodes.
 
 **Proof:**
 1. **Trust Conservation:** 
+
     ```math
     \sum_{i=1}^n t_i = 1
     ```
 2. **Trust Flow Equation:** For Sybil node $s$:
+
    ```math
    t_s = (1-\alpha)\sum_{j \in \mathcal{S}} C_{sj}t_j + \alpha p_s
    ```
 3. **No External Input:** Honest nodes don't trust Sybils, so:
+
    ```math
    \sum_{s \in \mathcal{S}} t_s = (1-\alpha)\sum_{s \in \mathcal{S}}\sum_{j \in \mathcal{S}} C_{sj}t_j + \alpha\sum_{s \in \mathcal{S}} p_s
    ```
@@ -353,12 +356,15 @@ Where $\mathcal{S}$ is the set of Sybil nodes.
     \sum_{s \in \mathcal{S}}\sum_{j \in \mathcal{S}} C_{sj}t_j \leq \sum_{s \in \mathcal{S}} t_s
     ```
 5. **Solving:** 
+
    ```math
    \sum_{s \in \mathcal{S}} t_s \leq (1-\alpha)\sum_{s \in \mathcal{S}} t_s + \alpha\sum_{s \in \mathcal{S}} p_s
    ```
+
    ```math
    \alpha\sum_{s \in \mathcal{S}} t_s \leq \alpha\sum_{s \in \mathcal{S}} p_s
    ```
+   
    ```math
    \sum_{s \in \mathcal{S}} t_s \leq \sum_{s \in \mathcal{S}} p_s
    ```
