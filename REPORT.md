@@ -325,7 +325,7 @@ For maximum Sybil resistance, concentrate pre-trust on:
 2. **Long-standing nodes** (temporal trust)
 3. **Verified entities** (out-of-band authentication)
 
-**Theorem 3.5 (Pre-Trust Concentration):**
+**Theorem 3.4 (Pre-Trust Concentration):**
 If pre-trust is concentrated on $k$ honest nodes:
 ```math
 \text{Sybil bound} = \alpha \cdot \frac{\text{pre-trust to Sybils}}{\text{total pre-trust}}
@@ -445,7 +445,9 @@ Appleseed models trust as energy that spreads and dissipates through the network
 #### 4.1.1 Mathematical Formulation
 
 **Energy Evolution:**
-$$\mathbf{e}^{(t+1)} = d \cdot \mathbf{P}^T \mathbf{e}^{(t)}$$
+```math
+\mathbf{e}^{(t+1)} = d \cdot \mathbf{P}^T \mathbf{e}^{(t)}
+```
 
 Where:
 - $\mathbf{e}^{(t)}$ is energy distribution at time $t$
@@ -453,15 +455,21 @@ Where:
 - $\mathbf{P}$ is row-stochastic transition matrix
 
 **Trust Accumulation:**
-$$\mathbf{s} = \sum_{t=0}^{\infty} (1-d) \cdot \mathbf{e}^{(t)}$$
+```math
+\mathbf{s} = \sum_{t=0}^{\infty} (1-d) \cdot \mathbf{e}^{(t)}
+```
 
 ### 4.2 Convergence Theory
 
 **Theorem 4.1 (Energy Conservation):**
-$$\|\mathbf{e}^{(t)}\|_1 = d^t \|\mathbf{e}^{(0)}\|_1$$
+```math
+\|\mathbf{e}^{(t)}\|_1 = d^t \|\mathbf{e}^{(0)}\|_1
+```
 
 **Theorem 4.2 (Closed-Form Solution):**
-$$\mathbf{s} = (1-d)(\mathbf{I} - d\mathbf{P}^T)^{-1}\mathbf{e}^{(0)}$$
+```math
+\mathbf{s} = (1-d)(\mathbf{I} - d\mathbf{P}^T)^{-1}\mathbf{e}^{(0)}
+```
 
 ### 4.3 Algorithm Flow
 
