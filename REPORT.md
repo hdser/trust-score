@@ -709,7 +709,10 @@ Flow centrality measures importance based on random walk visitation with balance
 FC_B(v) = \lim_{N \to \infty} \frac{1}{N \cdot L} \sum_{w=1}^N \sum_{t=1}^L \mathbb{1}[X_t^{(w)} = v]
 ```
 
-Where walks follow balance-weighted transitions.
+Where walks follow balance-weighted transitions. With:
+- $N$ = number of walks
+- $L$ = walk length
+- $X_t^{(w)}$ = position at time $t$ in walk $w$
 
 #### 7.1.2 Balance-Weighted Transitions
 
@@ -728,12 +731,15 @@ g(b) = \begin{cases}
 
 **Critical:** This means walks prefer edges where the walker holds tokens of the target.
 
-### 7.2 Stationary Distribution
+### 7.2 Relationship to Stationary Distribution
 
-**Theorem 7.1 (Balance-Weighted Stationary Distribution):**
-
+For ergodic chains:
 ```math
-\boldsymbol{\pi}_B = \mathbf{P}_B^T \boldsymbol{\pi}_B
+\lim_{t \to \infty} \Pr[X_t = v] = \pi_v
+``` 
+Where $\pi$ is the stationary distribution satisfying:
+```math
+\pi = \mathbf{P}^T\pi
 ```
 
 ### 7.3 Algorithm Flow
@@ -822,6 +828,52 @@ The balance-weighted transition matrix:
 ```
 
 Weights are adjusted: higher probability to nodes where walker holds their tokens.
+
+
+### 7.5 Flow Centrality Results
+
+**Monte Carlo Simulation (10,000 walks, length 10):**
+
+```mermaid
+flowchart LR
+    subgraph "Visit Distribution"
+        V[Total: 100,000 visits]
+        VA[A: 13,371 13.4%]
+        VB[B: 23,609 23.6%]
+        VC[C: 29,293 29.3%]
+        VD[D: 12,584 12.6%]
+        VE[E: 4,358 4.4%]
+        VF[F: 16,785 16.8%]
+    end
+    
+    subgraph "Flow Patterns"
+        P1[C is main hub]
+        P2[B secondary hub]
+        P3[E rarely visited]
+        P4[F return path]
+    end
+    
+    V --> VA
+    V --> VB
+    V --> VC
+    V --> VD
+    V --> VE
+    V --> VF
+    
+    VC --> P1
+    VB --> P2
+    VE --> P3
+    VF --> P4
+```
+
+**Sample Walk Trajectories:**
+
+| Walk | Path | Visits |
+|------|------|--------|
+| 1 | B→C→E→F→A→B→C→E→F→A | C:2, F:2, A:2, B:2, E:2 |
+| 2 | D→E→F→A→B→C→E→F→A→B | F:2, A:2, B:2, C:1, D:1, E:2 |
+| 3 | A→C→E→F→A→B→D→F→A→C | A:3, C:2, F:2, E:1, B:1, D:1 |
+
 
 ---
 
@@ -943,19 +995,7 @@ With weights $[0.2, 0.3, 0.3, 0.2]$:
 
 ---
 
-## Summary and Key Insights
-
-### 1. Trust Creates Acceptance, Balances Enable Flow
-
-**Fundamental Understanding:**
-- If $W_{ij} = 1$: Node $i$ trusts node $j$ → Node $i$ accepts token $T(j)$
-- For payment from Alice to Charlie through Bob:
-  - Charlie must trust Bob (accept $T(B)$) 
-  - Bob must trust Alice (accept $T(A)$)
-  - Alice needs $T(A)$ to send
-  - Bob needs $T(A)$ to forward
-
-### 2. Algorithm Classification by Balance Usage
+## Summary
 
 | Algorithm | Uses Balances | Purpose | Key Formula |
 |-----------|---------------|---------|-------------|
@@ -965,27 +1005,3 @@ With weights $[0.2, 0.3, 0.3, 0.2]$:
 | **Conductance** | ✅ Yes | Network cohesion | $\phi_B(S) = \frac{\text{cut}_B(S, \bar{S})}{\min(\text{vol}_B(S), \text{vol}_B(\bar{S}))}$ |
 | **Flow Centrality** | ✅ Yes | Path importance | $P_B(i \to j) \propto W_{ij} \cdot g(B_{ij})$ |
 | **Hybrid** | ✅ Yes | Complete liquidity | $L(v) = \sum_{i=1}^4 w_i \cdot \hat{f}_i(v)$ |
-
-### 3. Payment Capacity Formula
-
-For token $T(s)$ from source $s$ to target $t$:
-```math
-\text{Capacity}(s \to t) = \min_{i \in \text{path}} \left\{ B_{v_i, s} \cdot \mathbb{1}[W_{v_{i+1}, s} \geq \tau] \right\}
-```
-
-### 4. Critical Implementation Considerations
-
-1. **Always check trust direction**: $W_{ij} = 1$ means $i$ accepts from $j$
-2. **Verify balance availability**: Each forwarder needs source's tokens
-3. **Use hybrid metrics** for payment systems
-4. **Pure trust algorithms** for reputation only
-5. **Monitor bottlenecks** where trust exists but balances insufficient
-
-### 5. Key Theoretical Results
-
-- **EigenTrust Convergence**: $\|\mathbf{t}^{(k)} - \mathbf{t}^*\|_1 \leq 2(1-\alpha)^k$
-- **Appleseed Energy**: $\|\mathbf{e}^{(t)}\|_1 = d^t \|\mathbf{e}^{(0)}\|_1$
-- **Sybil Bound**: $\sum_{s \in \text{Sybil}} t_s \leq \alpha \cdot m/n$
-- **Cheeger Inequality**: $\lambda_2/2 \leq \phi_G \leq \sqrt{2\lambda_2}$
-
-The complete framework successfully bridges theoretical foundations with practical implementation, clearly distinguishing between trust (acceptance potential) and balances (payment capacity) to enable realistic payment routing in decentralized token networks.
