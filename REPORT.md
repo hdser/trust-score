@@ -65,7 +65,6 @@ $$\mathbf{P} = \mathbf{D}_{\text{out}}^{-1} \mathbf{W}$$
 
 where:
 
-
 ```math
 \mathbf{D}_{\text{out}} =
 \begin{bmatrix}
@@ -82,12 +81,15 @@ A matrix $\mathbf{C}$ is column-stochastic if each column sums to 1:
 $$\mathbf{C} = \mathbf{W} \mathbf{D}_{\text{in}}^{-1}$$
 
 where:
-$$\mathbf{D}_{\text{in}} = \begin{bmatrix}
+
+```math
+\mathbf{D}_{\text{in}} = \begin{bmatrix}
 \sum_{i} W_{i1} & 0 & \cdots & 0 \\
 0 & \sum_{i} W_{i2} & \cdots & 0 \\
 \vdots & \vdots & \ddots & \vdots \\
 0 & 0 & \cdots & \sum_{i} W_{in}
-\end{bmatrix}$$
+\end{bmatrix}
+```
 
 
 ### 1.5 Trust Score Pipeline
@@ -173,7 +175,9 @@ For Alice to pay Charlie:
 **Definition 2.1 (Payment Capacity for Token Flow):**
 For a payment of token $T(s)$ from source $s$ to target $t$ through path $P = (s = v_0, v_1, ..., v_k = t)$:
 
-$$\text{Capacity}(s \to t, T(s)) = \min_{i=0}^{k-1} \left\{ B_{v_i, s} \cdot \mathbb{1}[W_{v_{i+1}, s} \geq \tau] \right\}$$
+```math
+\text{Capacity}(s \to t, T(s)) = \min_{i=0}^{k-1} \left\{ B_{v_i, s} \cdot \mathbb{1}[W_{v_{i+1}, s} \geq \tau] \right\}
+```
 
 This means:
 - Each node $v_i$ must hold token $T(s)$
@@ -208,12 +212,14 @@ $$\mathbf{M} = (1-\alpha)\mathbf{C}^T + \alpha\mathbf{e}\mathbf{p}^T$$
 
 The term $\mathbf{e}\mathbf{p}^T$ creates a rank-1 matrix:
 
-$$\mathbf{e}\mathbf{p}^T = \begin{bmatrix} 1 \\ 1 \\ \vdots \\ 1 \end{bmatrix} \begin{bmatrix} p_1 & p_2 & \cdots & p_n \end{bmatrix} = \begin{bmatrix} 
+```math
+\mathbf{e}\mathbf{p}^T = \begin{bmatrix} 1 \\ 1 \\ \vdots \\ 1 \end{bmatrix} \begin{bmatrix} p_1 & p_2 & \cdots & p_n \end{bmatrix} = \begin{bmatrix} 
 p_1 & p_2 & \cdots & p_n \\ 
 p_1 & p_2 & \cdots & p_n \\ 
 \vdots & \vdots & \ddots & \vdots \\ 
 p_1 & p_2 & \cdots & p_n 
-\end{bmatrix}$$
+\end{bmatrix}
+```
 
 Properties:
 - Every row is identical and equals $\mathbf{p}^T$
@@ -307,24 +313,29 @@ flowchart TD
 Consider a 6-node network:
 
 **Trust Matrix:**
-$$\mathbf{W} = \begin{bmatrix}
+
+```math
+\mathbf{W} = \begin{bmatrix}
 0 & 1 & 1 & 0 & 0 & 0 \\
 0 & 0 & 1 & 1 & 0 & 0 \\
 0 & 0 & 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 0 & 1 & 1 \\
 0 & 0 & 0 & 0 & 0 & 1 \\
 1 & 0 & 0 & 0 & 0 & 0
-\end{bmatrix}$$
+\end{bmatrix}
+```
 
 **Column-Stochastic Matrix:**
-$$\mathbf{C} = \begin{bmatrix}
+```math
+\mathbf{C} = \begin{bmatrix}
 0 & 1 & 0.5 & 0 & 0 & 0 \\
 0 & 0 & 0.5 & 1 & 0 & 0 \\
 0 & 0 & 0 & 0 & 0.5 & 0 \\
 0 & 0 & 0 & 0 & 0.5 & 0.5 \\
 0 & 0 & 0 & 0 & 0 & 0.5 \\
 1 & 0 & 0 & 0 & 0 & 0
-\end{bmatrix}$$
+\end{bmatrix}
+```
 
 **Pre-trust (converters at 2,4):**
 $$\mathbf{p} = [0.05, 0.45, 0.05, 0.45, 0, 0]^T$$
@@ -466,14 +477,17 @@ flowchart TD
 ### 4.5 Complete Example
 
 **Row-Stochastic Matrix:**
-$$\mathbf{P} = \begin{bmatrix}
+
+```math
+\mathbf{P} = \begin{bmatrix}
 0 & 0.5 & 0.5 & 0 & 0 & 0 \\
 0 & 0 & 0.5 & 0.5 & 0 & 0 \\
 0 & 0 & 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 0 & 0.5 & 0.5 \\
 0 & 0 & 0 & 0 & 0 & 1 \\
 1 & 0 & 0 & 0 & 0 & 0
-\end{bmatrix}$$
+\end{bmatrix}
+```
 
 **Energy Evolution (seeds at nodes 2,4):**
 
@@ -580,7 +594,9 @@ Conductance measures how well-connected a subset is to the rest of the graph.
 #### 6.1.1 Mathematical Definition
 
 **Definition 6.1 (Conductance):**
-$$\phi(S) = \frac{\text{cut}(S, \bar{S})}{\min(\text{vol}(S), \text{vol}(\bar{S}))}$$
+```math
+\phi(S) = \frac{\text{cut}(S, \bar{S})}{\min(\text{vol}(S), \text{vol}(\bar{S}))}
+```
 
 Where:
 - $\text{cut}(S, \bar{S}) = \sum_{u \in S, v \in \bar{S}} W_{uv}$
@@ -589,17 +605,24 @@ Where:
 ### 6.2 Balance-Weighted Conductance
 
 **Definition 6.2 (Balance-Weighted Volume):**
-$$\text{vol}_B(S) = \sum_{u \in S} \sum_{v \in V} W_{uv} \cdot f(B_{uv})$$
+```math
+\text{vol}_B(S) = \sum_{u \in S} \sum_{v \in V} W_{uv} \cdot f(B_{uv})
+```
 
 Where $f$ is the balance weighting function:
-$$f(b) = 1 + \log(1 + b)$$
+```math
+f(b) = 1 + \log(1 + b)
+```
 
 This gives more weight to edges where the source holds tokens of the target.
 
 ### 6.3 Spectral Connection
 
 **Theorem 6.1 (Cheeger's Inequality):**
-$$\frac{\lambda_2}{2} \leq \phi_G \leq \sqrt{2\lambda_2}$$
+```math
+\frac{\lambda_2}{2} \leq \phi_G \leq \sqrt{2\lambda_2}
+```
+
 
 ### 6.4 Algorithm Flow
 
@@ -658,10 +681,15 @@ flowchart TD
 
 ### 6.5 Matrix Representation
 
-$$\phi(S) = \frac{\mathbf{1}_S^T \mathbf{W} \mathbf{1}_{\bar{S}}}{\min(\mathbf{1}_S^T \mathbf{D} \mathbf{1}_S, \mathbf{1}_{\bar{S}}^T \mathbf{D} \mathbf{1}_{\bar{S}})}$$
+```math
+\phi(S) = \frac{\mathbf{1}_S^T \mathbf{W} \mathbf{1}_{\bar{S}}}{\min(\mathbf{1}_S^T \mathbf{D} \mathbf{1}_S, \mathbf{1}_{\bar{S}}^T \mathbf{D} \mathbf{1}_{\bar{S}})}
+```
 
 With balance weighting:
-$$\phi_B(S) = \frac{\mathbf{1}_S^T (\mathbf{W} \odot \mathbf{F}) \mathbf{1}_{\bar{S}}}{\min(\mathbf{1}_S^T \mathbf{D}_B \mathbf{1}_S, \mathbf{1}_{\bar{S}}^T \mathbf{D}_B \mathbf{1}_{\bar{S}})}$$
+
+```math
+\phi_B(S) = \frac{\mathbf{1}_S^T (\mathbf{W} \odot \mathbf{F}) \mathbf{1}_{\bar{S}}}{\min(\mathbf{1}_S^T \mathbf{D}_B \mathbf{1}_S, \mathbf{1}_{\bar{S}}^T \mathbf{D}_B \mathbf{1}_{\bar{S}})}
+```
 
 Where $\mathbf{F}_{ij} = f(B_{ij})$ and $\odot$ is element-wise multiplication.
 
@@ -676,27 +704,37 @@ Flow centrality measures importance based on random walk visitation with balance
 #### 7.1.1 Mathematical Definition
 
 **Definition 7.1 (Balance-Weighted Flow Centrality):**
-$$FC_B(v) = \lim_{N \to \infty} \frac{1}{N \cdot L} \sum_{w=1}^N \sum_{t=1}^L \mathbb{1}[X_t^{(w)} = v]$$
+
+```math
+FC_B(v) = \lim_{N \to \infty} \frac{1}{N \cdot L} \sum_{w=1}^N \sum_{t=1}^L \mathbb{1}[X_t^{(w)} = v]
+```
 
 Where walks follow balance-weighted transitions.
 
 #### 7.1.2 Balance-Weighted Transitions
 
 **Definition 7.2 (Balance-Weighted Transition Probability):**
-$$P_B(i \to j) = \frac{W_{ij} \cdot g(B_{ij})}{\sum_k W_{ik} \cdot g(B_{ik})}$$
+```math
+P_B(i \to j) = \frac{W_{ij} \cdot g(B_{ij})}{\sum_k W_{ik} \cdot g(B_{ik})}
+```
 
 Where $g$ weights by available balance:
-$$g(b) = \begin{cases}
+```math
+g(b) = \begin{cases}
 1 + \sqrt{b/\bar{b}} & \text{if } b > 0 \\
 \epsilon & \text{if } b = 0
-\end{cases}$$
+\end{cases}
+```
 
 **Critical:** This means walks prefer edges where the walker holds tokens of the target.
 
 ### 7.2 Stationary Distribution
 
 **Theorem 7.1 (Balance-Weighted Stationary Distribution):**
-$$\boldsymbol{\pi}_B = \mathbf{P}_B^T \boldsymbol{\pi}_B$$
+
+```math
+\boldsymbol{\pi}_B = \mathbf{P}_B^T \boldsymbol{\pi}_B
+```
 
 ### 7.3 Algorithm Flow
 
@@ -760,24 +798,28 @@ flowchart TD
 ### 7.4 Example with Balance Integration
 
 Consider balance matrix:
-$$\mathbf{B} = \begin{bmatrix}
+```math
+\mathbf{B} = \begin{bmatrix}
 1000 & 0 & 0 & 0 & 0 & 0 \\
 200 & 500 & 0 & 0 & 0 & 0 \\
 0 & 300 & 800 & 0 & 0 & 0 \\
 0 & 0 & 400 & 600 & 0 & 0 \\
 0 & 0 & 0 & 200 & 200 & 0 \\
 0 & 0 & 0 & 0 & 100 & 100
-\end{bmatrix}$$
+\end{bmatrix}
+```
 
 The balance-weighted transition matrix:
-$$\mathbf{P}_B = \begin{bmatrix}
+```math
+\mathbf{P}_B = \begin{bmatrix}
 0 & 0.3 & 0.7 & 0 & 0 & 0 \\
 0 & 0 & 0.6 & 0.4 & 0 & 0 \\
 0 & 0 & 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 0 & 0.4 & 0.6 \\
 0 & 0 & 0 & 0 & 0 & 1 \\
 1 & 0 & 0 & 0 & 0 & 0
-\end{bmatrix}$$
+\end{bmatrix}
+```
 
 Weights are adjusted: higher probability to nodes where walker holds their tokens.
 
@@ -803,7 +845,9 @@ Components:
 ### 8.2 Effective Rate Calculation
 
 **Definition 8.2 (Effective Conversion Rate with Funded Paths):**
-$$\hat{R}(v) = \max_{c \in K} \left\{ R(c, T(v)) \cdot \mathbb{1}[\text{funded path } c \to v] \right\}$$
+```math
+\hat{R}(v) = \max_{c \in K} \left\{ R(c, T(v)) \cdot \mathbb{1}[\text{funded path } c \to v] \right\}
+```
 
 A funded path requires:
 1. Trust path exists
@@ -925,7 +969,9 @@ With weights $[0.2, 0.3, 0.3, 0.2]$:
 ### 3. Payment Capacity Formula
 
 For token $T(s)$ from source $s$ to target $t$:
-$$\text{Capacity}(s \to t) = \min_{i \in \text{path}} \left\{ B_{v_i, s} \cdot \mathbb{1}[W_{v_{i+1}, s} \geq \tau] \right\}$$
+```math
+\text{Capacity}(s \to t) = \min_{i \in \text{path}} \left\{ B_{v_i, s} \cdot \mathbb{1}[W_{v_{i+1}, s} \geq \tau] \right\}
+```
 
 ### 4. Critical Implementation Considerations
 
