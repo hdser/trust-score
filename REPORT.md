@@ -196,7 +196,9 @@ EigenTrust is fundamentally a **transitive trust aggregation** system that model
 
 The EigenTrust score vector $\mathbf{t} \in \mathbb{R}^n$ represents the stationary distribution of a modified random walk:
 
-$$\mathbf{t} = (1-\alpha)\mathbf{C}^T\mathbf{t} + \alpha\mathbf{p}$$
+```math
+\mathbf{t} = (1-\alpha)\mathbf{C}^T\mathbf{t} + \alpha\mathbf{p}
+```
 
 **Intuitive Interpretation:**
 - $(1-\alpha)$: Probability of following trust relationships
@@ -222,16 +224,25 @@ The **stationary distribution** of this walk gives EigenTrust scores.
 #### 3.1.3 Matrix Construction Theory
 
 **Column-Stochastic Trust Matrix:**
-$$\mathbf{C} = \mathbf{W}\mathbf{D}_c^{-1}$$
+
+```math
+\mathbf{C} = \mathbf{W}\mathbf{D}_c^{-1}
+```
 
 Where $\mathbf{D}_c$ is the diagonal matrix of column sums. This ensures:
-$$\sum_{i=1}^n C_{ij} = 1 \quad \forall j$$
+
+```math
+\sum_{i=1}^n C_{ij} = 1 \quad \forall j
+```
 
 **Physical Meaning:** Each column represents how node $j$'s trust is distributed to other nodes.
 
 **Handling Dangling Nodes:**
 For nodes with no outgoing trust (column sum = 0):
-$$\mathbf{C}[:,j] = \frac{1}{n}\mathbf{e}$$
+
+```math
+\mathbf{C}[:,j] = \frac{1}{n}\mathbf{e}
+```
 
 This means **untrusting nodes distribute trust uniformly** - preventing dead ends in the random walk.
 
@@ -271,14 +282,23 @@ The matrix $\mathbf{M} = (1-\alpha)\mathbf{C}^T + \alpha\mathbf{e}\mathbf{p}^T$ 
 
 **Theorem 3.2 (Linear Convergence):**
 Power iteration converges at geometric rate:
-$$\|\mathbf{t}^{(k)} - \mathbf{t}^*\|_1 \leq 2(1-\alpha)^k$$
+
+```math
+\|\mathbf{t}^{(k)} - \mathbf{t}^*\|_1 \leq 2(1-\alpha)^k
+```
 
 **Proof:**
 The error can be decomposed as:
-$$\mathbf{t}^{(k)} - \mathbf{t}^* = \sum_{i=2}^n c_i \lambda_i^k \mathbf{v}_i$$
+
+```math
+\mathbf{t}^{(k)} - \mathbf{t}^* = \sum_{i=2}^n c_i \lambda_i^k \mathbf{v}_i
+```
 
 Since $|\lambda_i| \leq 1-\alpha$ for $i > 1$:
-$$\|\mathbf{t}^{(k)} - \mathbf{t}^*\|_1 \leq \sum_{i=2}^n |c_i| (1-\alpha)^k \|\mathbf{v}_i\|_1 \leq 2(1-\alpha)^k$$
+
+```math
+\|\mathbf{t}^{(k)} - \mathbf{t}^*\|_1 \leq \sum_{i=2}^n |c_i| (1-\alpha)^k \|\mathbf{v}_i\|_1 \leq 2(1-\alpha)^k
+```
 
 **Practical Implications:**
 - Smaller $\alpha$ → Faster convergence but more local influence
@@ -289,7 +309,10 @@ $$\|\mathbf{t}^{(k)} - \mathbf{t}^*\|_1 \leq \sum_{i=2}^n |c_i| (1-\alpha)^k \|\
 
 **Theorem 3.3 (Perturbation Bound):**
 If trust matrix $\mathbf{W}$ is perturbed by $\Delta\mathbf{W}$:
-$$\|\Delta\mathbf{t}\|_1 \leq \frac{\|\Delta\mathbf{W}\|_1}{\alpha}$$
+
+```math
+\|\Delta\mathbf{t}\|_1 \leq \frac{\|\Delta\mathbf{W}\|_1}{\alpha}
+```
 
 This shows EigenTrust is **robust to small trust changes** when $\alpha$ is not too small.
 
@@ -313,16 +336,32 @@ $$\sum_{s \in \mathcal{S}} t_s \leq \alpha \cdot \frac{m}{n}$$
 Where $\mathcal{S}$ is the set of Sybil nodes.
 
 **Proof:**
-1. **Trust Conservation:** $\sum_{i=1}^n t_i = 1$
+1. **Trust Conservation:** 
+    ```math
+    \sum_{i=1}^n t_i = 1
+    ```
 2. **Trust Flow Equation:** For Sybil node $s$:
-   $$t_s = (1-\alpha)\sum_{j \in \mathcal{S}} C_{sj}t_j + \alpha p_s$$
+   ```math
+   t_s = (1-\alpha)\sum_{j \in \mathcal{S}} C_{sj}t_j + \alpha p_s
+   ```
 3. **No External Input:** Honest nodes don't trust Sybils, so:
-   $$\sum_{s \in \mathcal{S}} t_s = (1-\alpha)\sum_{s \in \mathcal{S}}\sum_{j \in \mathcal{S}} C_{sj}t_j + \alpha\sum_{s \in \mathcal{S}} p_s$$
-4. **Sybil Trust Conservation:** $\sum_{s \in \mathcal{S}}\sum_{j \in \mathcal{S}} C_{sj}t_j \leq \sum_{s \in \mathcal{S}} t_s$
+   ```math
+   \sum_{s \in \mathcal{S}} t_s = (1-\alpha)\sum_{s \in \mathcal{S}}\sum_{j \in \mathcal{S}} C_{sj}t_j + \alpha\sum_{s \in \mathcal{S}} p_s
+   ```
+4. **Sybil Trust Conservation:** 
+    ```math
+    \sum_{s \in \mathcal{S}}\sum_{j \in \mathcal{S}} C_{sj}t_j \leq \sum_{s \in \mathcal{S}} t_s
+    ```
 5. **Solving:** 
-   $$\sum_{s \in \mathcal{S}} t_s \leq (1-\alpha)\sum_{s \in \mathcal{S}} t_s + \alpha\sum_{s \in \mathcal{S}} p_s$$
-   $$\alpha\sum_{s \in \mathcal{S}} t_s \leq \alpha\sum_{s \in \mathcal{S}} p_s$$
-   $$\sum_{s \in \mathcal{S}} t_s \leq \sum_{s \in \mathcal{S}} p_s$$
+   ```math
+   \sum_{s \in \mathcal{S}} t_s \leq (1-\alpha)\sum_{s \in \mathcal{S}} t_s + \alpha\sum_{s \in \mathcal{S}} p_s
+   ```
+   ```math
+   \alpha\sum_{s \in \mathcal{S}} t_s \leq \alpha\sum_{s \in \mathcal{S}} p_s
+   ```
+   ```math
+   \sum_{s \in \mathcal{S}} t_s \leq \sum_{s \in \mathcal{S}} p_s
+   ```
 
 If pre-trust is uniform: $p_s = 1/n$, giving the bound $\alpha m/n$.
 
@@ -350,7 +389,9 @@ For maximum Sybil resistance, concentrate pre-trust on:
 
 **Theorem 3.5 (Pre-Trust Concentration):**
 If pre-trust is concentrated on $k$ honest nodes:
-$$\text{Sybil bound} = \alpha \cdot \frac{\text{pre-trust to Sybils}}{\text{total pre-trust}}$$
+```math
+\text{Sybil bound} = \alpha \cdot \frac{\text{pre-trust to Sybils}}{\text{total pre-trust}}
+```
 
 
 ### 3.4 Algorithm Implementation
