@@ -440,18 +440,19 @@ $$\mathbf{p} = [0.05, 0.45, 0.05, 0.45, 0, 0]^T$$
 
 ### 4.1 Theoretical Foundation
 
-Appleseed models trust as energy that spreads and dissipates through the network.
+Appleseed models trust as **energy** that flows through the network with dissipation at each step, creating localized influence patterns.
 
 #### 4.1.1 Mathematical Formulation
 
 **Energy Evolution:**
+
 ```math
 \mathbf{e}^{(t+1)} = d \cdot \mathbf{P}^T \mathbf{e}^{(t)}
 ```
 
 Where:
-- $\mathbf{e}^{(t)}$ is energy distribution at time $t$
-- $d \in (0,1)$ is energy retention factor
+- $\mathbf{e}^{(t)} \in \mathbb{R}^n$ is energy distribution at iteration $t$
+- $d \in (0,1)$ is energy retention factor (decay parameter)
 - $\mathbf{P}$ is row-stochastic transition matrix
 
 **Trust Accumulation:**
@@ -459,19 +460,115 @@ Where:
 \mathbf{s} = \sum_{t=0}^{\infty} (1-d) \cdot \mathbf{e}^{(t)}
 ```
 
+Each iteration deposits $(1-d)$ fraction of current energy as permanent trust.
+
+#### 4.1.2 Row-Stochastic Matrix Construction
+
+**Transition Matrix Building:**
+```math
+\mathbf{P} = \mathbf{D}_r^{-1} \mathbf{W}
+```
+
+Where $\mathbf{D}_r$ is diagonal matrix of row sums:
+```math
+D_r[i,i] = \sum_{j=1}^n W_{ij}
+```
+
+**Stochastic Property:**
+```math
+\sum_{j=1}^n P_{ij} = 1 \quad \forall i
+```
+
+This ensures each node distributes exactly unit probability mass.
+
+**Handling Zero Out-Degree Nodes:**
+For nodes with no outgoing trust ($\sum_j W_{ij} = 0$):
+```math
+\mathbf{P}[i,:] = \frac{1}{n}\mathbf{e}^T
+```
+
+Such nodes distribute energy uniformly across all nodes.
+
+#### 4.1.3 Physical Interpretation
+
+**Energy Flow Model:**
+1. **Initial Injection:** Energy $\mathbf{e}^{(0)}$ injected at source nodes
+2. **Propagation:** At each step, energy flows along trust edges
+3. **Dissipation:** Fraction $(1-d)$ permanently deposited as trust
+4. **Continuation:** Remaining fraction $d$ continues propagating
+
+**Key Difference from EigenTrust:**
+- **EigenTrust:** Global consensus via stationary distribution
+- **Appleseed:** Local influence with geometric decay
+
 ### 4.2 Convergence Theory
+
+#### 4.2.1 Energy Conservation Laws
 
 **Theorem 4.1 (Energy Conservation):**
 ```math
 \|\mathbf{e}^{(t)}\|_1 = d^t \|\mathbf{e}^{(0)}\|_1
 ```
 
-**Theorem 4.2 (Closed-Form Solution):**
+**Proof:** Since $\mathbf{P}$ is row-stochastic, $\mathbf{P}^T$ preserves the 1-norm:
 ```math
-\mathbf{s} = (1-d)(\mathbf{I} - d\mathbf{P}^T)^{-1}\mathbf{e}^{(0)}
+\|\mathbf{P}^T \mathbf{e}\|_1 = \|\mathbf{e}\|_1
 ```
 
-### 4.3 Algorithm Flow
+Therefore:
+```math
+\|\mathbf{e}^{(t)}\|_1 = \|d \mathbf{P}^T \mathbf{e}^{(t-1)}\|_1 = d \|\mathbf{e}^{(t-1)}\|_1 = d^t \|\mathbf{e}^{(0)}\|_1
+```
+
+#### 4.2.2 Convergence Analysis
+
+**Theorem 4.2 (Geometric Convergence):**
+```math
+\|\mathbf{e}^{(t)}\|_1 \to 0 \text{ as } t \to \infty \text{ at rate } O(d^t)
+```
+
+**Trust Convergence:**
+Since $\sum_{t=0}^{\infty} d^t = \frac{1}{1-d}$ for $d < 1$:
+
+```math
+\|\mathbf{s} - \mathbf{s}^{(T)}\|_1 \leq (1-d) \sum_{t=T+1}^{\infty} d^t \|\mathbf{e}^{(0)}\|_1 = d^{T+1} \|\mathbf{e}^{(0)}\|_1
+```
+
+#### 4.2.3 Closed-Form Solution
+
+**Theorem 4.3 (Analytical Solution):**
+
+```math
+\mathbf{s} = (1-d)(\mathbf{I} - d\mathbf{P}^T)^{-1}\mathbf{e}^{(0)}$$
+```
+
+**Proof:** Summing the geometric series:
+```math
+\mathbf{s} = (1-d) \sum_{t=0}^{\infty} (d\mathbf{P}^T)^t \mathbf{e}^{(0)} = (1-d)(\mathbf{I} - d\mathbf{P}^T)^{-1}\mathbf{e}^{(0)}
+```
+
+The matrix $(\mathbf{I} - d\mathbf{P}^T)$ is invertible since $d < 1$ ensures all eigenvalues of $d\mathbf{P}^T$ have magnitude $< 1$.
+
+### 4.3 Algorithmic Properties
+
+#### 4.3.1 Local vs Global Trust
+
+**Locality Principle:**
+Energy decay creates **distance-based trust weighting**:
+$$\text{Trust from path of length } k \propto d^k$$
+
+**Effective Range:**
+Most trust comes from paths of length $\leq \frac{-\ln(0.01)}{\ln(d)} \approx \frac{4.6}{\ln(d^{-1})}$
+
+**Parameter Effects:**
+- **High $d$ (e.g., 0.9):** Trust spreads further, more global
+- **Low $d$ (e.g., 0.5):** Trust stays local, direct relationships dominate
+
+
+
+This makes Appleseed particularly efficient for networks where trust should remain localized.
+
+### 4.4 Algorithm Flow
 
 ```mermaid
 flowchart TD
@@ -527,7 +624,7 @@ flowchart TD
     E1 --> E2
 ```
 
-### 4.4 Energy Flow Visualization
+### 4.5 Energy Flow Visualization
 
 ```mermaid
 flowchart TD
@@ -561,32 +658,6 @@ flowchart TD
     E1A --> E2
     E2 --> EI
 ```
-
-### 4.5 Complete Example
-
-**Row-Stochastic Matrix:**
-
-```math
-\mathbf{P} = \begin{bmatrix}
-0 & 0.5 & 0.5 & 0 & 0 & 0 \\
-0 & 0 & 0.5 & 0.5 & 0 & 0 \\
-0 & 0 & 0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 0 & 0.5 & 0.5 \\
-0 & 0 & 0 & 0 & 0 & 1 \\
-1 & 0 & 0 & 0 & 0 & 0
-\end{bmatrix}
-```
-
-**Energy Evolution (seeds at nodes 2,4):**
-
-| Time | Total Energy | Energy Distribution | Trust Accumulated |
-|------|--------------|-------------------|-------------------|
-| 0 | 1.000 | [0, 0.5, 0, 0.5, 0, 0] | [0, 0, 0, 0, 0, 0] |
-| 1 | 0.850 | [0, 0, 0.213, 0.213, 0.213, 0.213] | [0, 0.075, 0, 0.075, 0, 0] |
-| 2 | 0.723 | [0.213, 0, 0, 0.106, 0.181, 0.222] | [0, 0.075, 0.032, 0.107, 0.032, 0.032] |
-| ∞ | 0.000 | [0, 0, 0, 0, 0, 0] | [0.168, 0.197, 0.189, 0.197, 0.133, 0.116] |
-
-**Note:** Appleseed also does NOT use balances - pure trust propagation.
 
 ---
 
